@@ -1,0 +1,74 @@
+import simplegui
+tsec = 0
+A= 0
+B = 0
+C = 0
+D = 0
+reflex = 0
+total_reflex = 0
+Active_stop = True
+
+# define helper function format that converts time
+# in tenths of seconds into formatted string A:BC.D
+
+def format(t):
+    global tsec
+    
+    A = tsec // 600    
+    B = ((tsec / 10) % 60) // 10
+    C = ((tsec / 10) % 60) % 10
+    D = tsec % 10
+    return str(A)+ ":" + str(B) + str(C) + "." + str(D)
+    
+# define event handlers for buttons; "Start", "Stop", "Reset"
+def stop():
+    timer.stop()
+    global tsec, reflex, total_reflex, Active_stop
+       
+    if Active_stop == True:
+        reflex = reflex + 1
+    if tsec % 10 == 0 and Active_stop == True:
+        total_reflex += 1 
+        
+    Active_stop = False 
+           
+def start():
+    global Active_stop
+    Active_stop = True
+    timer.start()
+    
+def reset():
+    global tsec, reflex, total_reflex
+    reflex = 0
+    total_reflex = 0
+    tsec = 0
+    timer.stop()
+    
+    
+
+# define event handler for timer with 0.1 sec interval
+def timer_thenth():
+    global tsec
+    tsec += 1
+    
+    
+
+# define draw handler
+def draw_timer(canvas):
+    canvas.draw_text(format(tsec), [135, 115],35, "White")
+    canvas.draw_text(str(total_reflex) + "/" + str(reflex), [280,40], 30, "green")
+
+    
+    
+# create  frame
+frame = simplegui.create_frame('STOPWATCH', 350, 200)
+
+# register event handlers
+timer = simplegui.create_timer(100, timer_thenth)
+frame.set_draw_handler(draw_timer)
+frame.add_button("Stop", stop, 200)
+frame.add_button("Start", start, 200)
+frame.add_button("Reset", reset, 200)
+
+# start frame
+frame.start()
